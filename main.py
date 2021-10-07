@@ -8,8 +8,9 @@ def main():
     bs = BeautifulSoup(page.content, features='html.parser')
 
     for offer in bs.find_all('div', class_="offer-wrapper"):
-        koszt = offer.find('p', class_='price')
-        print(koszt)
+        koszt = offer.find('p', class_='price').get_text().strip()
+        offerTitle = offer.find('strong').get_text().strip()
+        print(f'Tytuł:{offerTitle}.\nkoszt:{koszt}')
 
 
 if __name__ == "__main__":
