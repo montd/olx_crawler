@@ -1,0 +1,139 @@
+[
+   {
+      "name": "__cf_bm",
+      "value": "rZgCpznXxZvI.Rg9V7uyNE0IQpuENNeGTOZpglUh380-1634056069-0-AcJok7SxVSpPmeQtsBoULhZrCm8QdTxmr9Q/a4ows7bMTJoZA4dG4jLAfjhb4VQDdz7QN/xhv0HI0bx2yUsf5ZyG4KVHf6iq+8kBtUKWwdMV",
+      "path": "/",
+      "domain": ".pyszne.pl",
+      "secure": true,
+      "httpOnly": true,
+      "expiry": 1634057869,
+      "sameSite": "None"
+   },
+   {
+      "name": "cwSession",
+      "value": "%7B%22id%22%3A%22fdbae608-6b8c-4037-a2b0-6c8d9e412995%22%7D",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": false,
+      "httpOnly": false,
+      "expiry": 1634057870,
+      "sameSite": "Lax"
+   },
+   {
+      "name": "userExperiments",
+      "value": "%7B%22id%22%3A%22eaa9a799-f9a9-468b-80c2-e27c3c80f25a%22%2C%22attributes%22%3A%7B%7D%7D",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": false,
+      "httpOnly": false,
+      "expiry": 1758472070,
+      "sameSite": "Lax"
+   },
+   {
+      "name": "localFavorites",
+      "value": "[]",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1665160070,
+      "sameSite": "None"
+   },
+   {
+      "name": "sortby",
+      "value": "default",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "sameSite": "None"
+   },
+   {
+      "name": "selectedFilters",
+      "value": "%7B%22restoreFromCookie%22%3Afalse%7D",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "sameSite": "None"
+   },
+   {
+      "name": "searchstring",
+      "value": "80-728%20Gda%C5%84sk",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1665160071,
+      "sameSite": "None"
+   },
+   {
+      "name": "searchstringmapper",
+      "value": "%7B%22location%22%3A%2280-728%20Gda%C5%84sk%22%2C%22lat%22%3A54.34973%2C%22lng%22%3A18.67251%7D",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1665160071,
+      "sameSite": "None"
+   },
+   {
+      "name": "postcode",
+      "value": "80-728",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1665160071,
+      "sameSite": "None"
+   },
+   {
+      "name": "latitude",
+      "value": "54.34973",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1665160071,
+      "sameSite": "None"
+   },
+   {
+      "name": "longitude",
+      "value": "18.67251",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1665160071,
+      "sameSite": "None"
+   },
+   {
+      "name": "activeAddress",
+      "value": "%7B%22address%22%3A%7B%22location%22%3A%7B%22city%22%3A%22Gda%C5%84sk%22%2C%22country%22%3A%22%22%2C%22deliveryAreaId%22%3A%2280-728%22%2C%22district%22%3A%22%22%2C%22lat%22%3A54.34973%2C%22lng%22%3A18.67251%2C%22locationSlug%22%3A%22gdansk-gdansk-80-728%22%2C%22placeId%22%3A%22%22%2C%22postalCode%22%3A%2280-728%22%2C%22state%22%3A%22Pomorskie%22%2C%22street%22%3A%22%22%2C%22streetNumber%22%3A%22%22%2C%22takeawayPostalCode%22%3A%2280-728%22%2C%22formattedAddress%22%3A%2280-728%20Gda%C5%84sk%22%2C%22id%22%3A%22%22%2C%22timeZone%22%3A%22%22%7D%2C%22shippingDetails%22%3A%7B%7D%2C%22savedAddressId%22%3A%22%22%7D%2C%22searchString%22%3A%2280-728%20Gda%C5%84sk%22%7D",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "expiry": 1758472071,
+      "sameSite": "None"
+   },
+   {
+      "name": "pickup",
+      "value": "takeaway",
+      "path": "/",
+      "domain": "www.pyszne.pl",
+      "secure": true,
+      "httpOnly": false,
+      "sameSite": "None"
+   },
+   {
+      "name": "utag_main",
+      "value": "v_id:017c7554e8ec0019a81396cdb1de0004e003c00d00bd0$_sn:1$_se:1$_ss:1$_st:1634057871405$ses_id:1634056071405%3Bexp-session$_pn:1%3Bexp-session",
+      "path": "/",
+      "domain": ".pyszne.pl",
+      "secure": false,
+      "httpOnly": false,
+      "expiry": 1665592071,
+      "sameSite": "None"
+   }
+]

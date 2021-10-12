@@ -1,110 +1,120 @@
 from bs4 import BeautifulSoup
-from requests import get
+import json
 import gzip
-from collections import OrderedDict
-from requests import Session
-import socket
-import cfscrape
 import unicodedata
 import re
+import os
 import urllib
+import urllib.request 
+import selenium
+import selenium.webdriver
 
-city = "gdansk"
-postalCode = "80-728"
+#for testing purposes
+userCity = "gdansk"
+userPostalCode = "80-728"
 baseUrl = "https://www.pyszne.pl/na-dowoz/jedzenie/"
 # example: https://www.pyszne.pl/na-dowoz/jedzenie/bydgoszcz-bydgoszcz-85-021
+siteCookie = ''
+cookieLocation = 'savedCookie.json'
 
-# Remove city name accents
-def removeAccents(text):
-    try:
-        text = unicode(text, 'utf-8')
-    except NameError: # unicode is a default on python 3 
-        pass
-    text = unicodedata.normalize('NFD', text)\
-           .encode('ascii', 'ignore')\
-           .decode("utf-8")
-    return str(text)
 
-def parsePrice(price):
-    return price.replace(' ','').replace('zł','').replace(',','.')
-
-def pyszneplPost():
-
-    return
-
-# Get user localisation; City and postal code
-def getUserLocalistaion():
-    global city
-    global postalCode
-    city = removeAccents(input(f"City: ")).lower()
-    postalCode = input(f"Polish postal code in '12-345' format: ")
-
-    if re.match(r'[0-9][0-9]\-[0-9][0-9][0-9]', postalCode): 
-        print("Correct postal code, continuing.")
-        return True
-    else:
-        print("Bad postal code, exiting.")
+class siteHandling():
+    
+    def getCookie(siteUrl): # Get fresh cookies from combined url if needed
+        """Expecting siteURL for the selenium GET function"""
+        driver = selenium.webdriver.Firefox()
+        driver.get(siteUrl)
+        cookiesDataRaw = driver.get_cookies()
+        cookiesData = "set-cookie:" + (str(cookiesDataRaw[0])[1:-1]).replace('"name":','').replace('"value":','').replace("'",'').replace(",",';').replace(":",' =')
+        print(cookiesData)
+        with open(cookieLocation, 'w') as outfile:
+            json.dump(cookiesData, outfile)
+        with open('rawcookie.json', 'w') as outfile:
+            json.dump(cookiesDataRaw, outfile, indent=3)
+        driver.close()
+        return cookiesData
+  
+    def loadCookie(cookieLocation): # Load saved cookie or get a first one
+        try:
+            if os.stat(cookieLocation).st_size > 0:
+                with open(cookieLocation) as json_file:
+                    return json.load(json_file)
+        except OSError:
+            print('There is no cookie file yet...')
         return False
+        
+    def urllibMethod(siteUrl, siteCookie):
+        headers = {
+            'Host': 'www.pyszne.pl',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Connection': 'keep-alive',
+            'Cookie': str(siteCookie),
+            'Cache-Control': 'max-age=0',
+            'TE': 'trailers',
+            }
+        request = urllib.request.Request(siteUrl, headers=headers)
+        r = gzip.decompress(urllib.request.urlopen(request).read()) #It is implied that the webpage is gzipped, although a check might be necessary in future
 
-def cfscrapeMethod(siteUrl):
-    scraper = cfscrape.create_scraper()  # returns a CloudScraper instance
-    # Or: scraper = cloudscraper.CloudScraper()  # CloudScraper inherits from requests.Session
-    return scraper.get(siteUrl).text  # => "<!DOCTYPE html><html><head>..."
+        return(r)
 
-def requestsMethod(siteUrl):
-    s = Session()
-    headers = OrderedDict({
-        'Host': 'www.pyszne.pl',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Sec-Fetch-User': '?1',
-        'Connection': 'keep-alive',
-        'Cookie': 'PHPSESSID=ld7fcj6ah62rs23fq4gmpols8l; realRefr=https%3A%2F%2Fwww.google.com%2F; s_2051430886=0; cookieConsent=temporary; searchstring=80-728%20Gda%C5%84sk; latitude=54.34973; longitude=18.67251; postcode=80-728; userExperiments=%7B%22id%22%3A%2299a30676-f774-42d8-bfaf-098820412cb8%22%2C%22attributes%22%3A%7B%7D%7D; localFavorites=[]; sortby=default; selectedFilters=%7B%22restoreFromCookie%22%3Afalse%7D; activeAddress=%7B%22address%22%3A%7B%22location%22%3A%7B%22city%22%3A%22Gda%C5%84sk%22%2C%22country%22%3A%22%22%2C%22deliveryAreaId%22%3A%2280-728%22%2C%22district%22%3A%22%22%2C%22lat%22%3A54.34973%2C%22lng%22%3A18.67251%2C%22locationSlug%22%3A%22gdansk-gdansk-80-728%22%2C%22placeId%22%3A%22%22%2C%22postalCode%22%3A%2280-728%22%2C%22state%22%3A%22Pomorskie%22%2C%22street%22%3A%22%22%2C%22streetNumber%22%3A%22%22%2C%22takeawayPostalCode%22%3A%2280-728%22%2C%22formattedAddress%22%3A%2280-728%20Gda%C5%84sk%22%2C%22id%22%3A%22%22%2C%22timeZone%22%3A%22%22%7D%2C%22shippingDetails%22%3A%7B%7D%2C%22savedAddressId%22%3A%22%22%7D%2C%22searchString%22%3A%2280-728%20Gda%C5%84sk%22%7D; __cf_bm=32Fcra679kSQ.xSTRjpOtEPT2gHNHsnhh62_bJgglbg-1634024840-0-AYP/NFwpBJM2uJ+qjCeGPbzqiXXYYIHyXGDyk0QvrHAktahPsF/H212dDMM6OQDkBDL0Le6arPcQMSRBKpvS5l9heXIDHGFRo6R1qtmmtEzP',
-        'Cache-Control': 'max-age=0',
-        'TE': 'trailers',
-    })
-    response = get(siteUrl, headers=headers)
-    return(response)
 
-def urllibMethod(siteUrl):
-    headers = {
-        'Host': 'www.pyszne.pl',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Sec-Fetch-User': '?1',
-        'Connection': 'keep-alive',
-        'Cookie': 'PHPSESSID=ld7fcj6ah62rs23fq4gmpols8l; realRefr=https%3A%2F%2Fwww.google.com%2F; s_2051430886=0; cookieConsent=temporary; searchstring=80-728%20Gda%C5%84sk; latitude=54.34973; longitude=18.67251; postcode=80-728; userExperiments=%7B%22id%22%3A%2299a30676-f774-42d8-bfaf-098820412cb8%22%2C%22attributes%22%3A%7B%7D%7D; localFavorites=[]; sortby=default; selectedFilters=%7B%22restoreFromCookie%22%3Afalse%7D; activeAddress=%7B%22address%22%3A%7B%22location%22%3A%7B%22city%22%3A%22Gda%C5%84sk%22%2C%22country%22%3A%22%22%2C%22deliveryAreaId%22%3A%2280-728%22%2C%22district%22%3A%22%22%2C%22lat%22%3A54.34973%2C%22lng%22%3A18.67251%2C%22locationSlug%22%3A%22gdansk-gdansk-80-728%22%2C%22placeId%22%3A%22%22%2C%22postalCode%22%3A%2280-728%22%2C%22state%22%3A%22Pomorskie%22%2C%22street%22%3A%22%22%2C%22streetNumber%22%3A%22%22%2C%22takeawayPostalCode%22%3A%2280-728%22%2C%22formattedAddress%22%3A%2280-728%20Gda%C5%84sk%22%2C%22id%22%3A%22%22%2C%22timeZone%22%3A%22%22%7D%2C%22shippingDetails%22%3A%7B%7D%2C%22savedAddressId%22%3A%22%22%7D%2C%22searchString%22%3A%2280-728%20Gda%C5%84sk%22%7D; __cf_bm=ZjviCOdK7IoBhYkawG6BVu.QmTwvcNjbxXf0M8pT2qk-1634026665-0-AQxgwoDwpBT+K0UKLn5g1zJDAkJ8UIYGx87MvmZYyMHX/rN76NVW7MR/dnBvU2TcE60hlOZ41kLaraABMIhAyunwQKQKnd4LvcrdO/5vf1hX',
-        'Cache-Control': 'max-age=0',
-        'TE': 'trailers',
-        }
-    request = urllib.request.Request(siteUrl, headers=headers)
-    r = gzip.decompress(urllib.request.urlopen(request).read())
+class userInput():
+    # Get user localisation; City and postal code
+    def getUserLocalistaion():
+        userCity = userInput.removeAccents(input(f"City: ")).lower()
+        userPostalCode = input(f"Polish postal code in '12-345' format: ")
+        if re.match(r'[0-9][0-9]\-[0-9][0-9][0-9]', userPostalCode): 
+            print("Correct postal code, continuing.")
+            return userCity,userPostalCode
+        else:
+            print("Bad postal code, exiting.")
+            return False
+    # Remove city name accents
+    def removeAccents(text):
+        text = unicodedata.normalize('NFD', text)\
+            .encode('ascii', 'ignore')\
+            .decode("utf-8")
+        return str(text)
 
-    return(r)
+class pageGetProcessing():
+    def parsePrice(price):
+        return price.replace(' ','').replace('zł','').replace(',','.')
 
 
 def main():
     # if not(getUserLocalistaion()): return
-    print(city,postalCode)
-    URL = baseUrl + city + '-' + city + '-' + postalCode
+    print(userCity,userPostalCode)
+    URL = baseUrl + userCity + '-' + userCity + '-' + userPostalCode
     print(URL)
-    page = urllibMethod(URL)
+    siteCookie = siteHandling.loadCookie(cookieLocation)
+    print('Site cookie type: ', type(siteCookie))
+    page = ''
+    if siteCookie != False: 
+        for i in range(0,1):
+            try: 
+                page = (siteHandling.urllibMethod(URL,siteCookie))
+                print(page[:100])
+                break
+            except urllib.error.HTTPError:
+                print("Cookies probably expired, will try to get new ones.")
+                siteCookie = siteHandling.getCookie(URL)
+            print("Failed to make cookies work :(")
+        return
+    else:
+        siteCookie = siteHandling.getCookie(URL)
+    print(page[:100])
+
     bs = BeautifulSoup(page, features='html.parser')
-    for offer in bs.find_all('ul', 'aria-label', "Otwarte"):
+    for offer in bs.find_all('ul'):
         # dostawa = offer.find('p', class_='price').get_text().strip()
         offerTitle = offer.find('a', 'title').get_text().strip()
         # print(f'{offerTitle}\n {parse_price(koszt)}')
